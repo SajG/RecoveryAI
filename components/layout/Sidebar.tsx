@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { AlertTriangle, Calendar, LayoutDashboard, MessageCircle, RefreshCw, Settings, Users } from "lucide-react";
+import { signOutClient } from "@/lib/client-auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -93,7 +93,7 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
         <Button
           variant="outline"
           className="w-full border-slate-700 bg-transparent text-slate-100 hover:bg-slate-800 hover:text-slate-100"
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => void signOutClient("/login")}
         >
           Sign out
         </Button>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { apiPath } from "@/lib/client-api";
 import { formatRelativeTime } from "@/lib/format";
 
 type SyncLog = {
@@ -42,7 +43,7 @@ export function SyncStatusBadge() {
 
     async function load() {
       try {
-        const response = await fetch("/api/sync-logs", { cache: "no-store" });
+        const response = await fetch(apiPath("sync-logs"), { cache: "no-store" });
         if (!response.ok) throw new Error("bad response");
         const data = (await response.json()) as { logs: SyncLog[] };
         const latest = data.logs?.[0] ?? null;

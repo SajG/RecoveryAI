@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/check-bridge-health",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/tally/manual-sync",
+      "schedule": "30 6 * * *"
     }
   ]
 }

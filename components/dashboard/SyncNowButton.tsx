@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiPath } from "@/lib/client-api";
 
 export function SyncNowButton() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export function SyncNowButton() {
   async function handleSync() {
     setIsSyncing(true);
     try {
-      await fetch("/api/tally/manual-sync", { method: "POST" });
+      await fetch(apiPath("tally/manual-sync"), { method: "POST" });
       router.refresh();
     } catch (_error) {
       // Keep interaction resilient on dashboard quick-sync.

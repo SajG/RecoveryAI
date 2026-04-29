@@ -49,6 +49,11 @@ const DEFAULT_BUCKETS: AgingBucket[] = [
   { bucket: "180+ days", count: 0, amount: 0 },
 ];
 
+const CRITICAL_PARTY_MIN_OUTSTANDING = 100_000;
+const CRITICAL_PARTY_MIN_OVERDUE_DAYS = 100;
+const CRITICAL_PARTY_MAX_OVERDUE_DAYS = 1_000;
+const CRITICAL_PARTIES_LIMIT = 10;
+
 function getAgingBucket(daysOverdue: number): AgingBucket["bucket"] {
   if (daysOverdue <= 30) return "0-30 days";
   if (daysOverdue <= 60) return "31-60 days";
@@ -237,14 +242,22 @@ export async function GET() {
     const agingBuckets = DEFAULT_BUCKETS.map((bucket) => bucketsMap.get(bucket.bucket) ?? bucket);
 
     const topCriticalParties = parties
-      .filter((party: PartyRow) => party.daysOverdue > 90 && toNumber(party.outstanding) > 0)
-      .sort((a: PartyRow, b: PartyRow) => {
-        if (b.daysOverdue !== a.daysOverdue) {
-          return b.daysOverdue - a.daysOverdue;
-        }
-        return toNumber(b.outstanding) - toNumber(a.outstanding);
+      .filter((party: PartyRow) => {
+        const outstanding = toNumber(party.outstanding);
+        return (
+          party.daysOverdue >= CRITICAL_PARTY_MIN_OVERDUE_DAYS &&
+          party.daysOverdue <= CRITICAL_PARTY_MAX_OVERDUE_DAYS &&
+          outstanding >= CRITICAL_PARTY_MIN_OUTSTANDING
+        );
       })
-      .slice(0, 5)
+      .sort((a: PartyRow, b: PartyRow) => {
+        const outstandingGap = toNumber(b.outstanding) - toNumber(a.outstanding);
+        if (outstandingGap !== 0) {
+          return outstandingGap;
+        }
+        return b.daysOverdue - a.daysOverdue;
+      })
+      .slice(0, CRITICAL_PARTIES_LIMIT)
       .map((party: PartyRow) => ({
         id: party.id,
         name: party.name,

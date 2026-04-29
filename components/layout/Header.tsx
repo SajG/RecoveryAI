@@ -1,8 +1,8 @@
 "use client";
 
-import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
+import { signOutClient } from "@/lib/client-auth";
 import { SyncStatusBadge } from "@/components/layout/SyncStatusBadge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -57,7 +57,7 @@ export function Header({ userName, userEmail }: HeaderProps) {
               <p className="text-sm font-medium text-slate-900">{userName}</p>
               <p className="text-xs text-slate-500">{userEmail}</p>
             </div>
-            <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/login" })}>
+            <DropdownMenuItem onClick={() => void signOutClient("/login")}>
               <LogOut className="h-4 w-4" />
               Sign out
             </DropdownMenuItem>

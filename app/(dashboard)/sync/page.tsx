@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { apiPath } from "@/lib/client-api";
 import { formatDateTime, formatRelativeTime } from "@/lib/format";
 
 type SyncLog = {
@@ -45,7 +46,7 @@ export default function SyncPage() {
   const [dateError, setDateError] = useState<string | null>(null);
 
   async function loadData() {
-    const response = await fetch("/api/sync-logs", { cache: "no-store" });
+    const response = await fetch(apiPath("sync-logs"), { cache: "no-store" });
     if (!response.ok) return;
     const data = (await response.json()) as { logs: SyncLog[] };
     setLogs(data.logs);
@@ -69,7 +70,7 @@ export default function SyncPage() {
     setLastSyncMessage(null);
     setRunningManual(true);
     try {
-      const response = await fetch("/api/sync/manual", {
+      const response = await fetch(apiPath("sync/manual"), {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ fromDate, toDate }),
@@ -93,7 +94,7 @@ export default function SyncPage() {
           const maxWaitMs = 20 * 60 * 1000;
           while (Date.now() - startedAt < maxWaitMs) {
             await new Promise((resolve) => setTimeout(resolve, 3000));
-            const jobResponse = await fetch(`/api/sync/manual?jobId=${encodeURIComponent(body.jobId)}`, {
+            const jobResponse = await fetch(apiPath(`sync/manual?jobId=${encodeURIComponent(body.jobId)}`), {
               cache: "no-store",
             });
             if (!jobResponse.ok) continue;
