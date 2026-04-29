@@ -2,11 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { ExternalLink, MessageCircle, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatINR } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 type WhatsAppDigestMessage = {
   salespersonId: string;
@@ -161,12 +162,15 @@ export function WhatsAppDigestPanel() {
                     <TableCell className="text-right">
                       {item.waMeUrl ? (
                         <div className="flex justify-end gap-2">
-                          <Button asChild variant="outline" size="sm">
-                            <a href={item.waMeUrl} target="_blank" rel="noreferrer">
-                              <ExternalLink className="mr-1 h-3.5 w-3.5" />
-                              Open
-                            </a>
-                          </Button>
+                          <a
+                            href={item.waMeUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+                          >
+                            <ExternalLink className="mr-1 h-3.5 w-3.5" />
+                            Open
+                          </a>
                           <Button
                             type="button"
                             variant="outline"
