@@ -4,6 +4,9 @@ import { sendOwnerEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { getOrCreateSettings } from "@/lib/settings";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
