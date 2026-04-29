@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/refresh-ai",
+      "schedule": "30 2 * * *"
+    },
+    {
+      "path": "/api/cron/check-bridge-health",
+      "schedule": "0 */6 * * *"
+    }
+  ]
+}

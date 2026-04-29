@@ -1,0 +1,206 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentMethod {
+  Cash
+  Cheque
+  UPI
+  RTGS
+  NEFT
+}
+
+enum ActionType {
+  Call
+  Visit
+  WhatsApp
+  Email
+  LegalNotice
+  StopSupply
+}
+
+enum ActionOutcome {
+  PromiseToPay
+  NoResponse
+  Disputed
+  PartialPayment
+  Recovered
+}
+
+enum SyncType {
+  auto
+  manual
+  cron
+}
+
+enum SyncStatus {
+  success
+  failed
+  partial
+}
+
+enum EscalationStatus {
+  New
+  Escalated
+  InProgress
+  Resolved
+  Snoozed
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+}
+
+model Salesperson {
+  id         String           @id @default(cuid())
+  name       String           @unique
+  tallyGroup String           @unique
+  phone      String
+  email      String
+  active     Boolean          @default(true)
+  parties    Party[]
+  targets    RecoveryTarget[]
+}
+
+model Party {
+  id                   String      @id @default(cuid())
+  name                 String      @unique
+  salespersonId        String
+  phone                String
+  email                String
+  address              String
+  outstanding          Decimal     @default(0) @db.Decimal(14, 2)
+  priority             String      @default("Low")
+  daysSinceLastPayment Int         @default(0)
+  daysOverdue          Int         @default(0)
+  aiRecommendation     String?     @db.Text
+  aiActions            Json?
+  riskScore            Int         @default(0)
+  redFlags             String[]
+  recommendationDate   DateTime?
+  escalationStatus     EscalationStatus @default(New)
+  escalationDeadline   DateTime?
+  snoozedUntil         DateTime?
+  invoices             Invoice[]
+  payments             Payment[]
+  actions              Action[]
+  lastSyncedAt         DateTime    @default(now())
+  createdAt            DateTime    @default(now())
+  salesperson          Salesperson @relation(fields: [salespersonId], references: [id], onDelete: Restrict)
+
+  @@index([salespersonId])
+  @@index([priority])
+  @@index([outstanding])
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  partyId       String
+  invoiceRef    String
+  invoiceDate   DateTime
+  dueDate       DateTime
+  amount        Decimal  @db.Decimal(14, 2)
+  pendingAmount Decimal  @db.Decimal(14, 2)
+  overdueDays   Int
+  party         Party    @relation(fields: [partyId], references: [id], onDelete: Cascade)
+
+  @@index([partyId])
+  @@index([overdueDays])
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  partyId     String
+  paymentDate DateTime
+  amount      Decimal       @db.Decimal(14, 2)
+  method      PaymentMethod
+  reference   String
+  notes       String?
+  party       Party         @relation(fields: [partyId], references: [id], onDelete: Cascade)
+
+  @@index([partyId])
+  @@index([paymentDate])
+}
+
+model Action {
+  id              String        @id @default(cuid())
+  partyId         String
+  actionType      ActionType
+  outcome         ActionOutcome
+  notes           String        @db.Text
+  amountCommitted Decimal?      @db.Decimal(14, 2)
+  amountRecovered Decimal?      @db.Decimal(14, 2)
+  commitmentDate  DateTime?
+  completedAt     DateTime?
+  createdBy       String
+  party           Party         @relation(fields: [partyId], references: [id], onDelete: Cascade)
+
+  @@index([partyId])
+  @@index([completedAt])
+}
+
+model RecoveryTarget {
+  id            String      @id @default(cuid())
+  salespersonId String
+  weekStart     DateTime
+  weekEnd       DateTime
+  targetAmount  Decimal     @db.Decimal(14, 2)
+  actualAmount  Decimal     @default(0) @db.Decimal(14, 2)
+  salesperson   Salesperson @relation(fields: [salespersonId], references: [id], onDelete: Cascade)
+
+  @@unique([salespersonId, weekStart])
+}
+
+model SyncLog {
+  id             String     @id @default(cuid())
+  syncType       SyncType
+  status         SyncStatus
+  partiesUpdated Int
+  errorMessage   String?    @db.Text
+  durationMs     Int
+  syncedAt       DateTime   @default(now())
+}
+
+model Setting {
+  id                          String   @id @default("default")
+  companyName                 String   @default("Synergy Bonding Solutions Pvt Ltd")
+  ownerEmail                  String   @default("owner@synergy.local")
+  timezone                    String   @default("Asia/Kolkata")
+  currency                    String   @default("INR")
+  priorityCriticalOutstanding Decimal  @default(500000) @db.Decimal(14, 2)
+  priorityCriticalOverdueDays Int      @default(120)
+  priorityHighOutstanding     Decimal  @default(200000) @db.Decimal(14, 2)
+  priorityHighOverdueDays     Int      @default(90)
+  priorityMediumOutstanding   Decimal  @default(100000) @db.Decimal(14, 2)
+  priorityMediumOverdueDays   Int      @default(60)
+  bridgeEndpointUrl           String   @default("/api/sync-from-bridge")
+  bridgeSecret                String?
+  tallyUrl                    String   @default("sbsp.tallycloud.in:9000")
+  syncSchedule                String   @default("daily_8am")
+  aiApiKey                    String?
+  aiModel                     String   @default("claude-sonnet-4-5")
+  aiAutoRegenerateFrequency   String   @default("daily")
+  aiMaxRecommendationsPerDay  Int      @default(50)
+  notificationDigest          String   @default("daily")
+  whatsappAlertsNumber        String?
+  alertOnCriticalParty        Boolean  @default(true)
+  alertOnSyncFail             Boolean  @default(true)
+  alertOnTargetMiss           Boolean  @default(true)
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+}

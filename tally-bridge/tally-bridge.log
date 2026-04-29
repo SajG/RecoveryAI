@@ -1,0 +1,130 @@
+2026-04-27 11:34:05,565 | INFO | Starting Tally bridge sync at 2026-04-27T11:34:05.565924
+2026-04-27 11:34:35,892 | ERROR | Bridge sync failed: HTTPConnectionPool(host='sbsp.tallycloud.in', port=9000): Read timed out. (read timeout=30)
+Traceback (most recent call last):
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/urllib3/connection.py", line 565, in getresponse
+    httplib_response = super().getresponse()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/http/client.py", line 1347, in getresponse
+    response.begin()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/http/client.py", line 307, in begin
+    version, status, reason = self._read_status()
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/http/client.py", line 268, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/socket.py", line 704, in readinto
+    return self._sock.recv_into(b)
+socket.timeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/urllib3/util/retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/urllib3/util/util.py", line 39, in reraise
+    raise value
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/urllib3/connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/urllib3/connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPConnectionPool(host='sbsp.tallycloud.in', port=9000): Read timed out. (read timeout=30)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 386, in main
+    payload = build_payload()
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 280, in build_payload
+    load_ledger_cache()
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 241, in load_ledger_cache
+    text = post_tally_xml(xml_payload)
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 64, in post_tally_xml
+    response = requests.post(
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/Users/sajalghatpande/Library/Python/3.9/lib/python/site-packages/requests/adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPConnectionPool(host='sbsp.tallycloud.in', port=9000): Read timed out. (read timeout=30)
+2026-04-27 11:34:54,098 | INFO | Starting Tally bridge sync at 2026-04-27T11:34:54.098427
+2026-04-27 11:35:47,966 | ERROR | Bridge sync failed: reference to invalid character number: line 379, column 21
+Traceback (most recent call last):
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 395, in main
+    payload = build_payload()
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 289, in build_payload
+    load_ledger_cache()
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 251, in load_ledger_cache
+    root = ET.fromstring(text)
+  File "/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/xml/etree/ElementTree.py", line 1347, in XML
+    parser.feed(text)
+  File "<string>", line None
+xml.etree.ElementTree.ParseError: reference to invalid character number: line 379, column 21
+2026-04-27 11:37:11,025 | INFO | Loaded ledger contact cache: 0 entries
+2026-04-27 11:40:02,234 | INFO | Loaded ledger contact cache: 2464 entries
+2026-04-27 12:00:50,856 | INFO | Loaded ledger contact cache: 2464 entries
+2026-04-27 12:00:50,950 | INFO | Fetching group outstandings: Om Sharma (Sundry Debtor- Sharmaji)
+2026-04-27 12:01:30,848 | INFO | Fetching group outstandings: Vikas Choudhari (Sundry Debtor- Vikas Choudhari)
+2026-04-27 12:02:12,084 | INFO | Fetching group outstandings: Vaibhav Ghatpande (Sundry Debtors - Vaibhav)
+2026-04-27 12:04:44,553 | INFO | Fetching group outstandings: Sanjay Thorat (Sundry Debtors- Sanjay Thorat)
+2026-04-27 12:05:16,293 | INFO | Fetching group outstandings: Nitin Kosandar (Sundry Debtors - Nitin)
+2026-04-27 12:06:48,339 | INFO | Fetching group outstandings: Irshad Jamadar (Sundry Debtors - Irshad Jamadar)
+2026-04-27 12:07:01,744 | INFO | Fetching group outstandings: Sunil Karle (Sundry Debtors - Sunil Karle)
+2026-04-27 12:18:29,187 | INFO | Starting Tally bridge sync at 2026-04-27T12:18:29.187484
+2026-04-27 12:19:39,093 | INFO | Loaded ledger contact cache: 2464 entries
+2026-04-27 12:19:39,179 | INFO | Fetching group outstandings: Om Sharma (Sundry Debtor- Sharmaji)
+2026-04-27 12:20:17,927 | INFO | Fetching group outstandings: Vikas Choudhari (Sundry Debtor- Vikas Choudhari)
+2026-04-27 12:20:54,523 | INFO | Fetching group outstandings: Vaibhav Ghatpande (Sundry Debtors - Vaibhav)
+2026-04-27 12:21:56,501 | INFO | Fetching group outstandings: Sanjay Thorat (Sundry Debtors- Sanjay Thorat)
+2026-04-27 12:22:29,816 | INFO | Fetching group outstandings: Nitin Kosandar (Sundry Debtors - Nitin)
+2026-04-27 12:23:18,110 | INFO | Fetching group outstandings: Irshad Jamadar (Sundry Debtors - Irshad Jamadar)
+2026-04-27 12:23:30,256 | INFO | Fetching group outstandings: Sunil Karle (Sundry Debtors - Sunil Karle)
+2026-04-27 12:28:39,290 | ERROR | Push attempt 1 failed: HTTPConnectionPool(host='localhost', port=3000): Read timed out. (read timeout=300)
+2026-04-27 12:29:04,345 | ERROR | Push attempt 2 failed: HTTP 500: 
+2026-04-27 12:29:19,379 | ERROR | Push attempt 3 failed: HTTP 429: {"success":false,"message":"Rate limit exceeded"}
+2026-04-27 12:29:19,379 | ERROR | Bridge sync failed: Failed to push payload after retries: HTTP 429: {"success":false,"message":"Rate limit exceeded"}
+Traceback (most recent call last):
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 455, in main
+    response = push_to_vercel(payload)
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 420, in push_to_vercel
+    raise RuntimeError(f"Failed to push payload after retries: {last_error}")
+RuntimeError: Failed to push payload after retries: HTTP 429: {"success":false,"message":"Rate limit exceeded"}
+2026-04-27 12:29:46,899 | INFO | Starting Tally bridge sync at 2026-04-27T12:29:46.899346
+2026-04-27 12:30:47,264 | WARNING | Tally XML call attempt 1 failed: HTTPConnectionPool(host='sbsp.tallycloud.in', port=9000): Read timed out. (read timeout=60)
+2026-04-27 12:32:08,318 | INFO | Loaded ledger contact cache: 2464 entries
+2026-04-27 12:32:08,407 | INFO | Fetching group outstandings: Om Sharma (Sundry Debtor- Sharmaji)
+2026-04-27 12:32:50,837 | INFO | Fetching group outstandings: Vikas Choudhari (Sundry Debtor- Vikas Choudhari)
+2026-04-27 12:33:29,104 | INFO | Fetching group outstandings: Vaibhav Ghatpande (Sundry Debtors - Vaibhav)
+2026-04-29 14:04:10,516 | INFO | Starting Tally bridge sync at 2026-04-29T14:04:10.516620
+2026-04-29 14:04:10,516 | ERROR | Missing required env keys: TALLY_URL, VERCEL_API_URL, FROM_DATE
+2026-04-29 14:04:32,503 | INFO | Starting Tally bridge sync at 2026-04-29T14:04:32.503761
+2026-04-29 14:05:38,648 | INFO | Loaded ledger contact cache: 2465 entries
+2026-04-29 14:05:39,925 | INFO | Fetching group outstandings: Om Sharma (Sundry Debtor- Sharmaji)
+2026-04-29 14:05:56,414 | INFO | Fetching group outstandings: Vikas Choudhari (Sundry Debtor- Vikas Choudhari)
+2026-04-29 14:06:15,322 | INFO | Fetching group outstandings: Vaibhav Ghatpande (Sundry Debtors - Vaibhav)
+2026-04-29 14:06:45,378 | INFO | Fetching group outstandings: Sanjay Thorat (Sundry Debtors- Sanjay Thorat)
+2026-04-29 14:07:02,053 | INFO | Fetching group outstandings: Nitin Kosandar (Sundry Debtors - Nitin)
+2026-04-29 14:08:07,165 | WARNING | Tally XML call attempt 1 failed: HTTPConnectionPool(host='sbsp.tallycloud.in', port=9000): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x7fef790c3eb0>, 'Connection to sbsp.tallycloud.in timed out. (connect timeout=60)'))
+2026-04-29 14:08:27,518 | INFO | Fetching group outstandings: Irshad Jamadar (Sundry Debtors - Irshad Jamadar)
+2026-04-29 14:08:34,139 | INFO | Fetching group outstandings: Sunil Karle (Sundry Debtors - Sunil Karle)
+2026-04-29 14:08:41,514 | ERROR | Push attempt 1 failed: HTTP 404: <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width"/><meta charSet="utf-8"/><title>YourApp | 404</title><link rel="preconnect" href="https://fonts.gstatic.com"/><link href="https://fonts.googleapis.com/css2?family=Arimo&amp;display=swap" rel="stylesheet"/><meta name="next-head-count" content="5"/><noscript data-n-css=""></noscript><link rel="preload" href="/_next/static/chunks/webpack-3ebb5192d8002ab5a823.js" as="script"/><link rel="preload" href="/_next/static/chunks/f
+2026-04-29 14:08:47,031 | ERROR | Push attempt 2 failed: HTTP 404: <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width"/><meta charSet="utf-8"/><title>YourApp | 404</title><link rel="preconnect" href="https://fonts.gstatic.com"/><link href="https://fonts.googleapis.com/css2?family=Arimo&amp;display=swap" rel="stylesheet"/><meta name="next-head-count" content="5"/><noscript data-n-css=""></noscript><link rel="preload" href="/_next/static/chunks/webpack-3ebb5192d8002ab5a823.js" as="script"/><link rel="preload" href="/_next/static/chunks/f
+2026-04-29 14:09:02,533 | ERROR | Push attempt 3 failed: HTTP 404: <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width"/><meta charSet="utf-8"/><title>YourApp | 404</title><link rel="preconnect" href="https://fonts.gstatic.com"/><link href="https://fonts.googleapis.com/css2?family=Arimo&amp;display=swap" rel="stylesheet"/><meta name="next-head-count" content="5"/><noscript data-n-css=""></noscript><link rel="preload" href="/_next/static/chunks/webpack-3ebb5192d8002ab5a823.js" as="script"/><link rel="preload" href="/_next/static/chunks/f
+2026-04-29 14:09:48,302 | ERROR | Push attempt 4 failed: HTTP 404: <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width"/><meta charSet="utf-8"/><title>YourApp | 404</title><link rel="preconnect" href="https://fonts.gstatic.com"/><link href="https://fonts.googleapis.com/css2?family=Arimo&amp;display=swap" rel="stylesheet"/><meta name="next-head-count" content="5"/><noscript data-n-css=""></noscript><link rel="preload" href="/_next/static/chunks/webpack-3ebb5192d8002ab5a823.js" as="script"/><link rel="preload" href="/_next/static/chunks/f
+2026-04-29 14:10:33,808 | ERROR | Push attempt 5 failed: HTTP 404: <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width"/><meta charSet="utf-8"/><title>YourApp | 404</title><link rel="preconnect" href="https://fonts.gstatic.com"/><link href="https://fonts.googleapis.com/css2?family=Arimo&amp;display=swap" rel="stylesheet"/><meta name="next-head-count" content="5"/><noscript data-n-css=""></noscript><link rel="preload" href="/_next/static/chunks/webpack-3ebb5192d8002ab5a823.js" as="script"/><link rel="preload" href="/_next/static/chunks/f
+2026-04-29 14:10:33,808 | ERROR | Bridge sync failed: Failed to push payload after retries: HTTP 404: <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width"/><meta charSet="utf-8"/><title>YourApp | 404</title><link rel="preconnect" href="https://fonts.gstatic.com"/><link href="https://fonts.googleapis.com/css2?family=Arimo&amp;display=swap" rel="stylesheet"/><meta name="next-head-count" content="5"/><noscript data-n-css=""></noscript><link rel="preload" href="/_next/static/chunks/webpack-3ebb5192d8002ab5a823.js" as="script"/><link rel="preload" href="/_next/static/chunks/f
+Traceback (most recent call last):
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 543, in main
+    response = push_to_vercel(payload)
+  File "/Users/sajalghatpande/Desktop/Code/RecoveryAI/RecoveryAI/tally-bridge/sync_to_vercel.py", line 508, in push_to_vercel
+    raise RuntimeError(f"Failed to push payload after retries: {last_error}")
+RuntimeError: Failed to push payload after retries: HTTP 404: <!DOCTYPE html><html><head><meta name="viewport" content="width=device-width"/><meta charSet="utf-8"/><title>YourApp | 404</title><link rel="preconnect" href="https://fonts.gstatic.com"/><link href="https://fonts.googleapis.com/css2?family=Arimo&amp;display=swap" rel="stylesheet"/><meta name="next-head-count" content="5"/><noscript data-n-css=""></noscript><link rel="preload" href="/_next/static/chunks/webpack-3ebb5192d8002ab5a823.js" as="script"/><link rel="preload" href="/_next/static/chunks/f
