@@ -1,13 +1,17 @@
-import { headers } from "next/headers";
 import { AlertCircle, HeartPulse, Inbox, TrendingUp, Wallet } from "lucide-react";
 import { AIInsightPanel } from "@/components/dashboard/AIInsightPanel";
 import { AgingChart } from "@/components/dashboard/AgingChart";
+import { AgingMovementPanel } from "@/components/dashboard/AgingMovementPanel";
 import { CriticalPartiesTable } from "@/components/dashboard/CriticalPartiesTable";
+import { CollectionEfficiencyTrendChart } from "@/components/dashboard/CollectionEfficiencyTrendChart";
 import { KPICard } from "@/components/dashboard/KPICard";
+import { PaymentBehaviorByCustomerTable } from "@/components/dashboard/PaymentBehaviorByCustomerTable";
 import { RecentActionsFeed } from "@/components/dashboard/RecentActionsFeed";
 import { SalespeopleChart } from "@/components/dashboard/SalespeopleChart";
+import { SalespersonCollectionQualityTable } from "@/components/dashboard/SalespersonCollectionQualityTable";
 import { SyncNowButton } from "@/components/dashboard/SyncNowButton";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { getDashboardMetrics } from "@/lib/dashboard-metrics";
 import { formatCompactINR, formatINR, formatRelativeTime } from "@/lib/format";
 import type { DashboardResponse } from "@/types/dashboard";
 
@@ -18,25 +22,12 @@ function getHealthTone(score: number) {
 }
 
 async function getDashboardData(): Promise<DashboardResponse | null> {
-  const headerStore = headers();
-  const host = headerStore.get("host");
-
-  if (!host) {
+  try {
+    return await getDashboardMetrics();
+  } catch (error) {
+    console.error("Failed to load dashboard metrics for page", error);
     return null;
   }
-
-  const protocol = process.env.NODE_ENV === "development" ? "http" : headerStore.get("x-forwarded-proto") ?? "https";
-  const baseUrl = `${protocol}://${host}`;
-
-  const response = await fetch(`${baseUrl}/api/dashboard`, {
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    return null;
-  }
-
-  return (await response.json()) as DashboardResponse;
 }
 
 export default async function DashboardPage() {
@@ -120,8 +111,24 @@ export default async function DashboardPage() {
         <AgingChart data={data.agingBuckets} />
       </section>
 
+      <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2">
+        <CollectionEfficiencyTrendChart data={data.collectionEfficiencyTrend} />
+        <AgingMovementPanel data={data.agingMovement} />
+      </section>
+
+      <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2">
+        <SalespersonCollectionQualityTable rows={data.salespersonCollectionQuality} />
+        <PaymentBehaviorByCustomerTable rows={data.paymentBehaviorByCustomer} />
+      </section>
+
       <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <AIInsightPanel recoveredThisMonth={data.recoveredThisMonth} />
+        <AIInsightPanel
+          recoveredThisMonth={data.recoveredThisMonth}
+          totalOutstanding={data.totalOutstanding}
+          overdue90PlusCount={data.overdue90PlusCount}
+          topCriticalParties={data.topCriticalParties}
+          recentActionsCount={data.recentActions.length}
+        />
         <RecentActionsFeed actions={data.recentActions} />
       </section>
 

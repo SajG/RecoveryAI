@@ -1,18 +1,33 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { AlertTriangle, CheckCircle2, RefreshCw, Sparkles, Target, TriangleAlert } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCompactINR } from "@/lib/format";
+import type { CriticalParty } from "@/types/dashboard";
 
 type AIInsightPanelProps = {
   recoveredThisMonth: number;
+  totalOutstanding: number;
+  overdue90PlusCount: number;
+  topCriticalParties: CriticalParty[];
+  recentActionsCount: number;
   loading?: boolean;
 };
 
-export function AIInsightPanel({ recoveredThisMonth, loading = false }: AIInsightPanelProps) {
+export function AIInsightPanel({
+  recoveredThisMonth,
+  totalOutstanding,
+  overdue90PlusCount,
+  topCriticalParties,
+  recentActionsCount,
+  loading = false,
+}: AIInsightPanelProps) {
+  const router = useRouter();
+  const [isRefreshing, startTransition] = useTransition();
   const [refreshLabel, setRefreshLabel] = useState("Last refreshed: 4 hours ago");
 
   const insights = useMemo(
@@ -20,19 +35,25 @@ export function AIInsightPanel({ recoveredThisMonth, loading = false }: AIInsigh
       {
         icon: TriangleAlert,
         headline: "Critical",
-        description: "Matrixx Doors hasn't paid in 420 days — escalate today",
+        description:
+          topCriticalParties.length > 0
+            ? `${topCriticalParties[0].name} hasn't paid in ${topCriticalParties[0].daysOverdue} days — escalate today`
+            : "No critical party is overdue beyond 100 days right now",
         tone: "text-red-600",
       },
       {
         icon: Target,
         headline: "Focus",
-        description: "Tulsi Plywood (₹7.2L) is your biggest single recovery",
+        description:
+          topCriticalParties.length > 0
+            ? `${topCriticalParties[0].name} (${formatCompactINR(topCriticalParties[0].outstanding)}) is your biggest single recovery`
+            : "No high-value overdue account to prioritize yet",
         tone: "text-amber-600",
       },
       {
         icon: AlertTriangle,
         headline: "Warning",
-        description: "Om Sharma has 8 broken commitments this week",
+        description: `${overdue90PlusCount} parties are overdue by 90+ days out of ${formatCompactINR(totalOutstanding)} outstanding`,
         tone: "text-orange-600",
       },
       {
@@ -44,12 +65,22 @@ export function AIInsightPanel({ recoveredThisMonth, loading = false }: AIInsigh
       {
         icon: Sparkles,
         headline: "Action",
-        description: "12 parties haven't been contacted in 7+ days",
+        description:
+          recentActionsCount > 0
+            ? `${recentActionsCount} actions are logged recently — keep momentum going`
+            : "No completed actions logged yet — record today's follow-ups",
         tone: "text-sky-600",
       },
     ],
-    [recoveredThisMonth]
+    [overdue90PlusCount, recentActionsCount, recoveredThisMonth, topCriticalParties]
   );
+
+  const handleRefresh = () => {
+    startTransition(() => {
+      router.refresh();
+      setRefreshLabel("Last refreshed: just now");
+    });
+  };
 
   if (loading) {
     return (
@@ -78,10 +109,11 @@ export function AIInsightPanel({ recoveredThisMonth, loading = false }: AIInsigh
           variant="outline"
           size="sm"
           className="gap-2"
-          onClick={() => setRefreshLabel("Last refreshed: just now")}
+          disabled={isRefreshing}
+          onClick={handleRefresh}
         >
-          <RefreshCw className="h-3.5 w-3.5" />
-          Refresh
+          <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+          {isRefreshing ? "Refreshing..." : "Refresh"}
         </Button>
       </CardHeader>
       <CardContent className="space-y-3">

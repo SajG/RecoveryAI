@@ -57,7 +57,12 @@ export function RecentActionsFeed({ actions, loading = false }: RecentActionsFee
         </Link>
       </CardHeader>
       <CardContent className="space-y-2">
-        {actions.map((action) => {
+        {actions.length === 0 ? (
+          <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-4 text-center text-sm text-slate-600">
+            No recent actions yet. Log calls, visits, or WhatsApp follow-ups to see activity here.
+          </div>
+        ) : (
+          actions.map((action) => {
           const Icon = getActionIcon(action.actionType);
           const initials = action.salespersonName
             .split(" ")
@@ -87,7 +92,8 @@ export function RecentActionsFeed({ actions, loading = false }: RecentActionsFee
               <p className="text-xs text-slate-500">{action.completedAt ? formatRelativeTime(action.completedAt) : "-"}</p>
             </Link>
           );
-        })}
+          })
+        )}
       </CardContent>
     </Card>
   );

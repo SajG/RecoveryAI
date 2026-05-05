@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AlertTriangle, Calendar, LayoutDashboard, MessageCircle, RefreshCw, Settings, Users } from "lucide-react";
+import { AlertTriangle, Calendar, LayoutDashboard, Mail, MessageCircle, RefreshCw, Settings, ShieldAlert, TrendingUp, Users } from "lucide-react";
 import { signOutClient } from "@/lib/client-auth";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,9 @@ type SidebarProps = {
 const items = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Salespeople", href: "/salespeople", icon: Users },
+  { label: "Sales Performance", href: "/sales-performance", icon: TrendingUp },
+  { label: "Recovery Intelligence", href: "/recovery-intelligence", icon: ShieldAlert },
+  { label: "Contact Center", href: "/contacts", icon: Mail },
   { label: "WhatsApp Digest", href: "/whatsapp-digest", icon: MessageCircle },
   { label: "Escalations", href: "/escalations", icon: AlertTriangle },
   { label: "Recovery Plan", href: "/recovery-plan", icon: Calendar },

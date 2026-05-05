@@ -1,32 +1,19 @@
-import { headers } from "next/headers";
 import { Inbox, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WhatsAppDigestPanel } from "@/components/salespeople/WhatsAppDigestPanel";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCompactINR, formatINR, formatRelativeTime } from "@/lib/format";
+import { getDashboardMetrics } from "@/lib/dashboard-metrics";
 import type { DashboardResponse } from "@/types/dashboard";
 
 async function getDashboardData(): Promise<DashboardResponse | null> {
-  const headerStore = headers();
-  const host = headerStore.get("host");
-
-  if (!host) {
+  try {
+    return await getDashboardMetrics();
+  } catch (error) {
+    console.error("Failed to load salespeople metrics", error);
     return null;
   }
-
-  const protocol = process.env.NODE_ENV === "development" ? "http" : headerStore.get("x-forwarded-proto") ?? "https";
-  const baseUrl = `${protocol}://${host}`;
-
-  const response = await fetch(`${baseUrl}/api/dashboard`, {
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    return null;
-  }
-
-  return (await response.json()) as DashboardResponse;
 }
 
 export default async function SalespeoplePage() {

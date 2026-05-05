@@ -1,4 +1,4 @@
-import { PaymentMethod, Prisma } from "@/lib/generated/prisma/client";
+import { PaymentMethod, Prisma } from "@prisma/client";
 import { generatePartyRecommendation } from "@/lib/claude";
 import { prisma } from "@/lib/prisma";
 import { getPriority } from "@/lib/rules";

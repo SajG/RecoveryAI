@@ -7,7 +7,7 @@ import {
   PrismaClient,
   SyncStatus,
   SyncType,
-} from "../lib/generated/prisma/client";
+} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
