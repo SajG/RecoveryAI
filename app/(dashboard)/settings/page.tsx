@@ -127,7 +127,6 @@ export default function SettingsPage() {
 
   return (
     <Tabs defaultValue="general" className="space-y-4">
-      <TabsList className="grid h-auto w-full grid-cols-2 gap-1 md:grid-cols-6">
       <TabsList className="grid h-auto w-full grid-cols-2 gap-1 md:grid-cols-5">
         <TabsTrigger value="general">General</TabsTrigger>
         <TabsTrigger value="salespeople">Salespeople</TabsTrigger>
