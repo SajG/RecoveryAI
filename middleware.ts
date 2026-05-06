@@ -17,11 +17,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/salespeople/:path*",
-    "/escalations/:path*",
-    "/recovery-plan/:path*",
-    "/sync/:path*",
-    "/settings/:path*",
+    "/((?!api|_next/static|_next/image|favicon.ico|login).*)",
   ],
 };
