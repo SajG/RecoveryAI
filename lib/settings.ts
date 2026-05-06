@@ -23,10 +23,6 @@ export type AppSettingsResponse = {
   bridgeSecret: string | null;
   tallyUrl: string;
   syncSchedule: string;
-  aiApiKey: string | null;
-  aiModel: string;
-  aiAutoRegenerateFrequency: string;
-  aiMaxRecommendationsPerDay: number;
   notificationDigest: string;
   whatsappAlertsNumber: string | null;
   alertOnCriticalParty: boolean;
@@ -66,10 +62,6 @@ export function serializeSettings(settings: Awaited<ReturnType<typeof getOrCreat
     bridgeSecret: settings.bridgeSecret,
     tallyUrl: settings.tallyUrl,
     syncSchedule: settings.syncSchedule,
-    aiApiKey: settings.aiApiKey,
-    aiModel: settings.aiModel,
-    aiAutoRegenerateFrequency: settings.aiAutoRegenerateFrequency,
-    aiMaxRecommendationsPerDay: settings.aiMaxRecommendationsPerDay,
     notificationDigest: settings.notificationDigest,
     whatsappAlertsNumber: settings.whatsappAlertsNumber,
     alertOnCriticalParty: settings.alertOnCriticalParty,

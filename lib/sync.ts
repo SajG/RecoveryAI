@@ -1,5 +1,4 @@
-import { PaymentMethod, Prisma } from "@prisma/client";
-import { generatePartyRecommendation } from "@/lib/claude";
+import { PaymentMethod } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getPriority } from "@/lib/rules";
 import type { BridgePayload } from "@/lib/validation";
@@ -74,64 +73,6 @@ export function detectNewCriticalParties(
     }
   }
   return newlyCritical;
-}
-
-async function regenerateTopCriticalRecommendations(topPartyIds: string[]) {
-  if (topPartyIds.length === 0) return;
-  for (const partyId of topPartyIds) {
-    try {
-      const party = await prisma.party.findUnique({
-        where: { id: partyId },
-        include: {
-          salesperson: { select: { name: true } },
-          payments: { orderBy: { paymentDate: "desc" }, take: 5 },
-          actions: { orderBy: { completedAt: "desc" }, take: 5 },
-          invoices: { orderBy: { overdueDays: "desc" }, take: 5 },
-        },
-      });
-      if (!party) continue;
-      const recommendation = await generatePartyRecommendation(
-        {
-          name: party.name,
-          address: party.address,
-          salesperson: { name: party.salesperson.name },
-          outstanding: Number(party.outstanding),
-          daysSinceLastPayment: party.daysSinceLastPayment,
-          daysOverdue: party.daysOverdue,
-        },
-        {
-          payments: party.payments.map((payment) => ({
-            paymentDate: payment.paymentDate,
-            amount: Number(payment.amount),
-            method: payment.method,
-          })),
-          actions: party.actions.map((action) => ({
-            completedAt: action.completedAt,
-            actionType: action.actionType,
-            outcome: action.outcome,
-            notes: action.notes,
-          })),
-          invoices: party.invoices.map((invoice) => ({
-            invoiceDate: invoice.invoiceDate,
-            overdueDays: invoice.overdueDays,
-          })),
-        }
-      );
-
-      await prisma.party.update({
-        where: { id: party.id },
-        data: {
-          aiRecommendation: recommendation.recommendation,
-          aiActions: recommendation.suggestedActions as unknown as Prisma.InputJsonValue,
-          riskScore: recommendation.riskScore,
-          redFlags: recommendation.redFlags,
-          recommendationDate: new Date(),
-        },
-      });
-    } catch (error) {
-      console.error(`AI regeneration failed for party ${partyId}`, error);
-    }
-  }
 }
 
 export async function processBridgePayload(payload: BridgePayload): Promise<SyncStats> {
@@ -241,14 +182,6 @@ export async function processBridgePayload(payload: BridgePayload): Promise<Sync
   }
 
   const newlyCritical = detectNewCriticalParties(beforeByPartyId, afterByPartyId);
-  const topCritical = await prisma.party.findMany({
-    where: { priority: "Critical" },
-    orderBy: [{ outstanding: "desc" }, { daysOverdue: "desc" }],
-    take: 20,
-    select: { id: true },
-  });
-  void regenerateTopCriticalRecommendations(topCritical.map((party) => party.id));
-
   return {
     ...stats,
     newCritical: newlyCritical.length,

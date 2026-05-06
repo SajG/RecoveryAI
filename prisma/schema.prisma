@@ -87,11 +87,6 @@ model Party {
   priority             String      @default("Low")
   daysSinceLastPayment Int         @default(0)
   daysOverdue          Int         @default(0)
-  aiRecommendation     String?     @db.Text
-  aiActions            Json?
-  riskScore            Int         @default(0)
-  redFlags             String[]
-  recommendationDate   DateTime?
   escalationStatus     EscalationStatus @default(New)
   escalationDeadline   DateTime?
   snoozedUntil         DateTime?
@@ -191,10 +186,6 @@ model Setting {
   bridgeSecret                String?
   tallyUrl                    String   @default("sbsp.tallycloud.in:9000")
   syncSchedule                String   @default("daily_8am")
-  aiApiKey                    String?
-  aiModel                     String   @default("claude-sonnet-4-5")
-  aiAutoRegenerateFrequency   String   @default("daily")
-  aiMaxRecommendationsPerDay  Int      @default(50)
   notificationDigest          String   @default("daily")
   whatsappAlertsNumber        String?
   alertOnCriticalParty        Boolean  @default(true)

@@ -21,7 +21,7 @@ type EscalationRow = {
   daysOverdue: number;
   lastActionAt: string | null;
   lastActionNotes: string;
-  aiSuggestedEscalation: string;
+  suggestedEscalation: string;
   escalationDeadline: string | null;
   status: EscalationStatus;
 };
@@ -142,7 +142,7 @@ export default function EscalationsPage() {
                 <TableHead className="text-right">Outstanding</TableHead>
                 <TableHead className="text-right">Days Overdue</TableHead>
                 <TableHead>Last Action</TableHead>
-                <TableHead>AI Suggested Escalation</TableHead>
+                <TableHead>Suggested Escalation</TableHead>
                 <TableHead>Deadline</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Quick Actions</TableHead>
@@ -160,7 +160,7 @@ export default function EscalationsPage() {
                     <TableCell className="text-right">{formatINR(row.outstanding)}</TableCell>
                     <TableCell className="text-right">{row.daysOverdue}</TableCell>
                     <TableCell>{row.lastActionAt ? formatDate(row.lastActionAt) : "-"}</TableCell>
-                    <TableCell className="max-w-[250px] whitespace-normal text-xs">{row.aiSuggestedEscalation}</TableCell>
+                    <TableCell className="max-w-[250px] whitespace-normal text-xs">{row.suggestedEscalation}</TableCell>
                     <TableCell>{row.escalationDeadline ? formatDate(row.escalationDeadline) : "-"}</TableCell>
                     <TableCell>{row.status}</TableCell>
                     <TableCell className="space-x-1">

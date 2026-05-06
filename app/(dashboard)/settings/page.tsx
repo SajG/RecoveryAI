@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,10 +25,6 @@ type SettingsPayload = {
   bridgeSecret: string | null;
   tallyUrl: string;
   syncSchedule: string;
-  aiApiKey: string | null;
-  aiModel: string;
-  aiAutoRegenerateFrequency: string;
-  aiMaxRecommendationsPerDay: number;
   notificationDigest: string;
   whatsappAlertsNumber: string | null;
   alertOnCriticalParty: boolean;
@@ -40,7 +36,6 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<SettingsPayload | null>(null);
   const [salespeople, setSalespeople] = useState<Salesperson[]>([]);
   const [showBridgeSecret, setShowBridgeSecret] = useState(false);
-  const [showApiKey, setShowApiKey] = useState(false);
   const [bridgeTestMessage, setBridgeTestMessage] = useState<string | null>(null);
   const [bridgeTestOk, setBridgeTestOk] = useState<boolean | null>(null);
   const [runningBridgeTest, setRunningBridgeTest] = useState(false);
@@ -111,11 +106,6 @@ export default function SettingsPage() {
     }
   }
 
-  const estimatedCost = useMemo(() => {
-    if (!settings) return 0;
-    return Math.round(settings.aiMaxRecommendationsPerDay * 30 * 1.5);
-  }, [settings]);
-
   if (!settings) return <div>Loading settings...</div>;
 
   function Toggle({
@@ -138,11 +128,11 @@ export default function SettingsPage() {
   return (
     <Tabs defaultValue="general" className="space-y-4">
       <TabsList className="grid h-auto w-full grid-cols-2 gap-1 md:grid-cols-6">
+      <TabsList className="grid h-auto w-full grid-cols-2 gap-1 md:grid-cols-5">
         <TabsTrigger value="general">General</TabsTrigger>
         <TabsTrigger value="salespeople">Salespeople</TabsTrigger>
         <TabsTrigger value="priority">Priority Rules</TabsTrigger>
         <TabsTrigger value="bridge">Tally Bridge</TabsTrigger>
-        <TabsTrigger value="ai">AI Settings</TabsTrigger>
         <TabsTrigger value="notifications">Notifications</TabsTrigger>
       </TabsList>
 
@@ -247,41 +237,6 @@ export default function SettingsPage() {
           {bridgeTestMessage ? (
             <p className={`text-sm ${bridgeTestOk ? "text-emerald-700" : "text-red-700"}`}>{bridgeTestMessage}</p>
           ) : null}
-        </CardContent></Card>
-      </TabsContent>
-
-      <TabsContent value="ai">
-        <Card><CardContent className="space-y-3 pt-4">
-          <div>
-            <p className="text-xs text-slate-500">Anthropic API key</p>
-            <div className="flex gap-2">
-              <Input type={showApiKey ? "text" : "password"} value={settings.aiApiKey ?? ""} onChange={(e) => setSettings({ ...settings, aiApiKey: e.target.value })} />
-              <Button variant="outline" size="icon-sm" onClick={() => setShowApiKey((v) => !v)}>{showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</Button>
-            </div>
-          </div>
-          <div>
-            <p className="text-xs text-slate-500">Model</p>
-            <Select value={settings.aiModel} onValueChange={(value) => setSettings({ ...settings, aiModel: value ?? settings.aiModel })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="claude-sonnet-4-5">claude-sonnet-4-5</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <p className="text-xs text-slate-500">Auto-regenerate frequency</p>
-            <Select value={settings.aiAutoRegenerateFrequency} onValueChange={(value) => setSettings({ ...settings, aiAutoRegenerateFrequency: value ?? settings.aiAutoRegenerateFrequency })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="on_demand">On-demand</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div><p className="text-xs text-slate-500">Max recommendations/day</p><Input type="number" value={settings.aiMaxRecommendationsPerDay} onChange={(e) => setSettings({ ...settings, aiMaxRecommendationsPerDay: Number(e.target.value || 0) })} /></div>
-          <p className="text-sm">Estimated monthly cost: ₹{estimatedCost}</p>
-          <Button onClick={saveSettings}>Save</Button>
         </CardContent></Card>
       </TabsContent>
 

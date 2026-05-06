@@ -140,11 +140,6 @@ function computePriority(outstanding: number, daysOverdue: number): string {
   return "Low";
 }
 
-function computeRisk(priority: string, daysOverdue: number): number {
-  const base = priority === "Critical" ? 85 : priority === "High" ? 65 : priority === "Medium" ? 45 : 20;
-  return Math.min(99, base + Math.floor(daysOverdue / 15));
-}
-
 function makeMockParties(ownerIdx: number, count: number): PartySeed[] {
   return Array.from({ length: count }).map((_, i) => {
     const base = mockPartyPool[(ownerIdx * 3 + i) % mockPartyPool.length];
@@ -202,7 +197,6 @@ async function main() {
       const priority = computePriority(party.outstanding, party.daysOverdue);
       const daysSinceLastPayment = Math.max(0, Math.min(180, party.daysOverdue - 5));
       const now = new Date();
-      const recommendationDate = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
 
       const createdParty = await prisma.party.create({
         data: {
@@ -215,24 +209,6 @@ async function main() {
           priority,
           daysSinceLastPayment,
           daysOverdue: party.daysOverdue,
-          aiRecommendation:
-            priority === "Critical"
-              ? "Escalate immediately with legal notice readiness and daily follow-up cadence."
-              : priority === "High"
-                ? "Schedule field visit this week and secure written commitment with payment schedule."
-                : "Continue structured follow-up with WhatsApp reminders and weekly call cadence.",
-          aiActions: [
-            { type: "Call", owner: sp.name, dueInDays: 1 },
-            { type: "Visit", owner: sp.name, dueInDays: priority === "Critical" ? 2 : 5 },
-          ],
-          riskScore: computeRisk(priority, party.daysOverdue),
-          redFlags:
-            party.daysOverdue >= 180
-              ? ["AgingAbove180", "PaymentDelayPattern"]
-              : party.daysOverdue >= 90
-                ? ["AgingAbove90"]
-                : [],
-          recommendationDate,
           lastSyncedAt: now,
         },
       });

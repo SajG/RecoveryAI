@@ -1,14 +1,3 @@
-export type PartyRecommendation = {
-  riskScore: number;
-  recommendation: string;
-  suggestedActions: Array<{
-    label: string;
-    urgency: "today" | "this_week" | "this_month" | string;
-  }>;
-  estimatedRecoveryPercent: number;
-  redFlags: string[];
-};
-
 export type PartyDetailResponse = {
   party: {
     id: string;
@@ -20,11 +9,6 @@ export type PartyDetailResponse = {
     priority: string;
     daysSinceLastPayment: number;
     daysOverdue: number;
-    aiRecommendation: string | null;
-    aiActions: unknown;
-    riskScore: number;
-    redFlags: string[];
-    recommendationDate: string | Date | null;
     salesperson: {
       id: string;
       name: string;

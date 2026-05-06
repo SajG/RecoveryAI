@@ -9,7 +9,6 @@ Internal recovery management tool for Synergy Bonding Solutions Pvt Ltd (Pune), 
 - Prisma ORM + Supabase Postgres
 - NextAuth.js authentication
 - Recharts for analytics visualizations
-- Anthropic SDK for AI features
 - React Hook Form + Zod for forms and validation
 - Sonner for toast notifications
 - date-fns for date utilities

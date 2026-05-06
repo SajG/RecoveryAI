@@ -8,15 +8,17 @@ function toNumber(value: DecimalLike | number | null | undefined): number {
   return typeof value === "number" ? value : value.toNumber();
 }
 
-function summarizeRecommendation(text: string | null): string {
-  if (!text) return "No AI recommendation yet.";
-  const trimmed = text.trim().replace(/\s+/g, " ");
-  if (trimmed.length <= 140) return trimmed;
-  return `${trimmed.slice(0, 137)}...`;
+function buildSuggestedEscalation(outstanding: number, daysOverdue: number): string {
+  if (daysOverdue >= 180 || outstanding >= 500000) {
+    return "Initiate legal notice readiness and schedule a senior escalation call this week.";
+  }
+  if (daysOverdue >= 90 || outstanding >= 200000) {
+    return "Arrange a field visit and secure a signed repayment commitment with dates.";
+  }
+  return "Continue structured follow-ups with weekly check-ins and documented commitments.";
 }
 
-function deriveRiskScore(outstanding: number, daysOverdue: number, storedRiskScore: number): number {
-  if (storedRiskScore > 0) return storedRiskScore;
+function deriveRiskScore(outstanding: number, daysOverdue: number): number {
   const overdueComponent = Math.min(60, Math.floor(daysOverdue / 3));
   const outstandingComponent = Math.min(40, Math.floor(outstanding / 25000));
   return Math.max(0, Math.min(100, overdueComponent + outstandingComponent));
@@ -40,13 +42,13 @@ export async function GET() {
           select: { completedAt: true, notes: true },
         },
       },
-      orderBy: [{ riskScore: "desc" }, { outstanding: "desc" }],
+      orderBy: [{ outstanding: "desc" }, { daysOverdue: "desc" }],
     });
 
     const rows = parties.map((party: any) => {
       const lastAction = party.actions[0] ?? null;
       const outstanding = toNumber(party.outstanding);
-      const riskScore = deriveRiskScore(outstanding, party.daysOverdue, party.riskScore);
+      const riskScore = deriveRiskScore(outstanding, party.daysOverdue);
       return {
         id: party.id,
         name: party.name,
@@ -57,7 +59,7 @@ export async function GET() {
         daysOverdue: party.daysOverdue,
         lastActionAt: lastAction?.completedAt ?? null,
         lastActionNotes: lastAction?.notes ?? "",
-        aiSuggestedEscalation: summarizeRecommendation(party.aiRecommendation),
+        suggestedEscalation: buildSuggestedEscalation(outstanding, party.daysOverdue),
         escalationDeadline: party.escalationDeadline,
         status: party.escalationStatus,
       };

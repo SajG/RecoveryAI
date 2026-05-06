@@ -114,7 +114,7 @@ export default function RecoveryPlanPage() {
             <div><p className="text-xs text-slate-500">Health</p><p className={`text-xl font-semibold ${summary.health}`}>{summary.achievement >= 85 ? "Healthy" : summary.achievement >= 60 ? "Watch" : "At Risk"}</p></div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={handleSuggest}><Sparkles className="mr-1 h-4 w-4" />Auto-suggest targets</Button>
+            <Button variant="outline" onClick={handleSuggest}><Sparkles className="mr-1 h-4 w-4" />Suggest targets</Button>
             {suggestions ? <Button onClick={applySuggestions}>Apply</Button> : null}
             <Button variant="outline" onClick={exportExcel}><Download className="mr-1 h-4 w-4" />Export to Excel</Button>
             <Button variant="destructive" onClick={resetAll}><Trash2 className="mr-1 h-4 w-4" />Reset all</Button>

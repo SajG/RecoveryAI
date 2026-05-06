@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Mail, MapPin, MessageCircle, Phone, Plus, Scale, Truck, UserRound } from "lucide-react";
-import { AIRecommendation } from "@/components/parties/AIRecommendation";
 import { ActionModal } from "@/components/parties/ActionModal";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -44,9 +43,7 @@ function getActionIcon(actionType: string) {
 
 export function PartyDetailView({ initialData }: PartyDetailViewProps) {
   const [data, setData] = useState(initialData);
-  const [loadingRecommendation, setLoadingRecommendation] = useState(false);
   const [actionModalOpen, setActionModalOpen] = useState(false);
-  const [prefilledAction, setPrefilledAction] = useState<string | undefined>(undefined);
   const router = useRouter();
 
   async function refreshData() {
@@ -55,18 +52,6 @@ export function PartyDetailView({ initialData }: PartyDetailViewProps) {
     const next = (await response.json()) as PartyDetailResponse;
     setData(next);
     router.refresh();
-  }
-
-  async function regenerateRecommendation() {
-    setLoadingRecommendation(true);
-    try {
-      const response = await fetch(`/api/parties/${data.party.id}/regenerate-recommendation`, { method: "POST" });
-      if (response.ok) {
-        await refreshData();
-      }
-    } finally {
-      setLoadingRecommendation(false);
-    }
   }
 
   const sortedInvoices = useMemo(
@@ -154,30 +139,13 @@ export function PartyDetailView({ initialData }: PartyDetailViewProps) {
         </aside>
 
         <section>
-          <Tabs defaultValue="ai" className="w-full">
-            <TabsList className="grid h-auto w-full grid-cols-2 gap-1 md:grid-cols-5">
-              <TabsTrigger value="ai">🤖 AI</TabsTrigger>
+          <Tabs defaultValue="invoices" className="w-full">
+            <TabsList className="grid h-auto w-full grid-cols-2 gap-1 md:grid-cols-4">
               <TabsTrigger value="invoices">📄 Invoices</TabsTrigger>
               <TabsTrigger value="payments">💰 Payments</TabsTrigger>
               <TabsTrigger value="actions">📋 Actions</TabsTrigger>
               <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
             </TabsList>
-
-            <TabsContent value="ai" className="mt-4">
-              <AIRecommendation
-                recommendationDate={data.party.recommendationDate}
-                recommendation={data.party.aiRecommendation}
-                aiActions={data.party.aiActions}
-                riskScore={data.party.riskScore}
-                redFlags={data.party.redFlags}
-                onRegenerate={regenerateRecommendation}
-                regenerating={loadingRecommendation}
-                onUseAction={(label) => {
-                  setPrefilledAction(label);
-                  setActionModalOpen(true);
-                }}
-              />
-            </TabsContent>
 
             <TabsContent value="invoices" className="mt-4">
               <Card className="border border-slate-200">
@@ -284,7 +252,6 @@ export function PartyDetailView({ initialData }: PartyDetailViewProps) {
                   <CardTitle>Action History</CardTitle>
                   <Button
                     onClick={() => {
-                      setPrefilledAction(undefined);
                       setActionModalOpen(true);
                     }}
                   >
@@ -381,7 +348,7 @@ export function PartyDetailView({ initialData }: PartyDetailViewProps) {
         defaultCreatedBy={data.party.salesperson.name}
         open={actionModalOpen}
         onOpenChange={setActionModalOpen}
-        prefilledActionLabel={prefilledAction}
+        prefilledActionLabel={undefined}
         onSuccess={refreshData}
       />
     </div>
